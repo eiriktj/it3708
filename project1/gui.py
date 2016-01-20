@@ -1,4 +1,5 @@
 from tkinter import Canvas, Frame, BOTH
+from random import randint
 
 
 class DrawingFrame(Frame):
@@ -7,13 +8,18 @@ class DrawingFrame(Frame):
         Frame.__init__(self, parent)
 
         self.parent = parent
-        self.initUI()
+        self.init_ui()
 
-    def initUI(self):
+    def init_ui(self):
         self.parent.title('Flying boids')
         self.pack(fill=BOTH, expand=1)
         self.canvas = Canvas(self)
-        self.canvas.pack(fill=BOTH, expand=1)
 
-    def drawFrame(self):
+    def draw_frame(self):
+        for i in range(100):
+            rw = randint(0, 1920)
+            rh = randint(0, 1200)
+            self.canvas.create_oval(rw, rh, rw+20, rh-20, outline='blue', fill='blue',
+                    width=0)
+        self.canvas.pack(fill=BOTH, expand=1)
 
