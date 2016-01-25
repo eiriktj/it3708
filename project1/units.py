@@ -5,9 +5,7 @@ import numpy as np
 
 class Boid():
 
-    def __init__(self):
-        random_width = randint(0, 1920)
-        random_height = randint(0, 1200)
+    def __init__(self, random_width, random_height):
         self.velocity = np.array([0.0, 0.0])
         self.position = np.array([random_width, random_height])
         self.neighbors = []

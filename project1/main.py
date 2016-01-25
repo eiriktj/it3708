@@ -13,13 +13,11 @@ def main():
     frame_height = 1200
     root.geometry(str(frame_width)+'x'+str(frame_height)+'+0+0')
 
-    drawing_frame.draw_frame()
-
     # Initializes Controller class.
-    #controller = Controller(frame_width, frame_heigth)
+    controller = Controller(frame_width, frame_height, drawing_frame, root)
 
     # Starts loop after 5 seconds.
-    #root.after(500, controller.run())
+    root.after(500, controller.run())
     root.mainloop()
 
 # Calls main function when the main module is run.
