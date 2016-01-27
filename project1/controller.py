@@ -13,16 +13,23 @@ class Controller():
         self.boids = []
         for i in range(100):
             self.boids.append(Boid(randint(0, self.frame_width), randint(0,
-                self.frame_height))
+                self.frame_height)))
 
         self.run()
 
     def run(self):
-        #while True:
+        while True:
         #    for boid in self.boids:
         #        boid.updateBoid(boids)
-        for boid in self.boids:
-            self.drawing_frame.draw_oval(boid.position[0], boid.position[1], 20)
+            for boid in self.boids:
+                self.drawing_frame.draw_oval(boid.position[0],
+                        boid.position[1], 10)
+                boid.update_boid(self.boids)
 
-        self.root.update()
+            # Updates frame.
+            self.root.update()
+            # Sleep 25ms.
+            self.root.after(25)
+            # Delete all canvas figures.
+            self.drawing_frame.canvas.delete('all')
 
