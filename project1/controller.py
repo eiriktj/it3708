@@ -26,7 +26,7 @@ class Controller():
                         boid.position[1], 10)
                 boid.update_boid(self.boids)
 
-                # fix position if boid is outside of frame.
+                # Boids move to other side of frame instead of outside.
                 boid.position[0] %= self.frame_width
                 boid.position[1] %= self.frame_height
 
