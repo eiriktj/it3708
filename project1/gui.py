@@ -14,6 +14,7 @@ class DrawingFrame(Frame):
         self.parent.title('Flying boids')
         self.pack(fill=BOTH, expand=1)
         self.canvas = Canvas(self)
+        self.canvas.configure(background='#181818')
         self.canvas.pack(fill=BOTH, expand=1)
 
     # x and y coordinates of the top-left, s is sides of box which circle is
