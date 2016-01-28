@@ -26,6 +26,10 @@ class Controller():
                         boid.position[1], 10)
                 boid.update_boid(self.boids)
 
+                # fix position if boid is outside of frame.
+                boid.position[0] %= self.frame_width
+                boid.position[1] %= self.frame_height
+
             # Updates frame.
             self.root.update()
             # Sleep 25ms.
