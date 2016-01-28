@@ -1,4 +1,7 @@
 from random import randint
+from math import sqrt
+
+import numpy as np
 
 from units import Boid
 
@@ -11,6 +14,7 @@ class Controller():
         self.drawing_frame = drawing_frame
         self.root = root
         self.boids = []
+        self.boid_diameter = 10.0
         for i in range(100):
             self.boids.append(Boid(randint(0, self.frame_width), randint(0,
                 self.frame_height)))
@@ -19,12 +23,12 @@ class Controller():
 
     def run(self):
         while True:
-        #    for boid in self.boids:
-        #        boid.updateBoid(boids)
-            for boid in self.boids:
+            # Enumerate makes it possible to both get index and item of a list.
+            for index, boid in enumerate(self.boids):
                 self.drawing_frame.draw_oval(boid.position[0],
-                        boid.position[1], 10)
-                boid.update_boid(self.boids)
+                        boid.position[1], self.boid_diameter)
+                self.find_neighbors(index)
+                boid.update_boid()
 
                 # Boids move to other side of frame instead of outside.
                 boid.position[0] %= self.frame_width
@@ -36,4 +40,13 @@ class Controller():
             self.root.after(25)
             # Delete all canvas figures.
             self.drawing_frame.canvas.delete('all')
+
+    def find_neighbors(self, i):
+        self.boids[i].neighbors = []
+        for index, boid in enumerate(self.boids):
+            # np.linalg.norm(a-b) finds euclidean distance between two points.
+            distance = np.linalg.norm(self.boids[i].position-boid.position)
+            if  (index != i) and (distance < 15*self.boid_diameter):
+                self.boids[i].neighbors.append(index)
+
 

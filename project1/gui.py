@@ -16,7 +16,7 @@ class DrawingFrame(Frame):
         self.canvas = Canvas(self)
         self.canvas.pack(fill=BOTH, expand=1)
 
-    # x and y coordinates of the top-left, s of sides of box which circle is
+    # x and y coordinates of the top-left, s is sides of box which circle is
     # drawn.
     def draw_oval(self, x, y, s):
         self.canvas.create_oval(x, y, x+s, y+s, outline='blue', fill='blue', width=0)
