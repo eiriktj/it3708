@@ -8,6 +8,7 @@ class DrawingFrame(Frame):
         Frame.__init__(self, parent)
 
         self.parent = parent
+        self.boid_figures = []
         self.init_ui()
 
     def init_ui(self):
@@ -20,5 +21,9 @@ class DrawingFrame(Frame):
     # x and y coordinates of the top-left, s is sides of box which circle is
     # drawn.
     def draw_oval(self, x, y, s):
-        self.canvas.create_oval(x, y, x+s, y+s, outline='blue', fill='blue', width=0)
+        #self.boid_figures.append(self.canvas.create_oval(x, y, x+s, y+s, fill='blue'))
+        self.canvas.create_oval(x, y, x+s, y+s, fill='blue')
+
+    def move_figure(self, i, x_length, y_length):
+        self.canvas.move(self.boid_figures[i], x_length, y_length)
 

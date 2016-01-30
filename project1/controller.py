@@ -15,9 +15,17 @@ class Controller():
         self.root = root
         self.boids = []
         self.boid_diameter = 10.0
+        self.boid_radius = self.boid_diameter/2
+        self.neighbor_radius = 15*self.boid_diameter
+        self.separation_weight=1.0
+        self.alignment_weight=1.0
+        self.cohesion_weight=1.0
+        #Create boids and paint them on the frame.
         for i in range(100):
             self.boids.append(Boid(randint(0, self.frame_width), randint(0,
                 self.frame_height)))
+            self.drawing_frame.draw_oval(self.boids[-1].position[0],
+                    self.boids[-1].position[1], self.boid_diameter)
 
         self.run()
 
@@ -25,14 +33,18 @@ class Controller():
         while True:
             # Enumerate makes it possible to both get index and item of a list.
             for index, boid in enumerate(self.boids):
-                self.drawing_frame.draw_oval(boid.position[0],
-                        boid.position[1], self.boid_diameter)
                 self.find_neighbors(index)
+                self.calculate_separation_force(index)
+                self.calculate_alignment_force(index)
+                self.calculate_cohesion_force(index)
                 boid.update_boid()
 
                 # Boids move to other side of frame instead of outside.
                 boid.position[0] %= self.frame_width
                 boid.position[1] %= self.frame_height
+                self.drawing_frame.draw_oval(boid.position[0],
+                        boid.position[1], self.boid_diameter)
+                #self.drawing_frame.move_figure(index, boid.velocity[0], boid.velocity[1])
 
             # Updates frame.
             self.root.update()
@@ -43,10 +55,19 @@ class Controller():
 
     def find_neighbors(self, i):
         self.boids[i].neighbors = []
+        x_distance = [self.boids[i].position[0]-self.neighbor_radius,
+                        self.boids[i].position[0]+self.neighbor_radius]
+        y_distance = [self.boids[i].position[1]-self.neighbor_radius,
+                        self.boids[i].position[1]+self.neighbor_radius]
         for index, boid in enumerate(self.boids):
             # np.linalg.norm(a-b) finds euclidean distance between two points.
-            distance = np.linalg.norm(self.boids[i].position-boid.position)
-            if  (index != i) and (distance < 15*self.boid_diameter):
+            #distance = np.linalg.norm(self.boids[i].position-boid.position)
+            #if (index != i) and (distance < 15*self.boid_diameter):
+            #x_distance = abs(self.boids[i].position[0]-boid.position[0])
+            #y_distance = abs(self.boids[i].position[1]-boid.position[1])
+            if (index != i) and ((boid.position[0]>x_distance[0] and
+                    boid.position[0]<x_distance[1]) and
+                    (boid.position[1]>y_distance[0] and
+                    boid.position[1]<y_distance[1])):
                 self.boids[i].neighbors.append(index)
-
 
