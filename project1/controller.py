@@ -31,12 +31,15 @@ class Controller():
 
     def run(self):
         while True:
-            # Enumerate makes it possible to both get index and item of a list.
-            for index, boid in enumerate(self.boids):
-                #self.find_neighbors(index)
+            # Calculate new forces for each boid
+            for index in range(len(self.boids)):
+                self.find_neighbors(index)
                 #self.calculate_separation_force(index)
-                #self.calculate_alignment_force(index)
+                self.calculate_alignment_force(index)
                 #self.calculate_cohesion_force(index)
+
+            # Update the position of each boid.
+            for boid in self.boids:
                 boid.update_boid()
 
                 # Boids move to other side of frame instead of outside.
@@ -55,20 +58,27 @@ class Controller():
             self.drawing_frame.canvas.delete('all')
 
     def find_neighbors(self, i):
+        # Remove old neighbors.
         self.boids[i].neighbors = []
-        x_distance = [self.boids[i].position[0]-self.neighbor_radius,
-                        self.boids[i].position[0]+self.neighbor_radius]
-        y_distance = [self.boids[i].position[1]-self.neighbor_radius,
-                        self.boids[i].position[1]+self.neighbor_radius]
+        #x_distance = [self.boids[i].position[0]-self.neighbor_radius,
+        #                self.boids[i].position[0]+self.neighbor_radius]
+        #y_distance = [self.boids[i].position[1]-self.neighbor_radius,
+        #                self.boids[i].position[1]+self.neighbor_radius]
+        # Enumerate makes it possible to both get index and item of a list.
         for index, boid in enumerate(self.boids):
             # np.linalg.norm(a-b) finds euclidean distance between two points.
-            #distance = np.linalg.norm(self.boids[i].position-boid.position)
-            #if (index != i) and (distance < 15*self.boid_diameter):
+            distance = np.linalg.norm(self.boids[i].position-boid.position)
+            if (index != i) and (distance < 15*self.boid_diameter):
             #x_distance = abs(self.boids[i].position[0]-boid.position[0])
             #y_distance = abs(self.boids[i].position[1]-boid.position[1])
-            if (index != i) and ((boid.position[0]>x_distance[0] and
-                    boid.position[0]<x_distance[1]) and
-                    (boid.position[1]>y_distance[0] and
-                    boid.position[1]<y_distance[1])):
+            #if (index != i) and ((boid.position[0]>x_distance[0] and
+            #        boid.position[0]<x_distance[1]) and
+            #        (boid.position[1]>y_distance[0] and
+            #        boid.position[1]<y_distance[1])):
                 self.boids[i].neighbors.append(index)
+
+    def calculate_alignment_force(self, i):
+        self.boids[i].alignment = np.array([0.0, 0.0])
+        for neighbor in self.boids[i].neighbors:
+            self.boids[i].alignment += self.boids[neighbor].direction
 
