@@ -1,4 +1,4 @@
-from random import randint
+from random import random
 from math import sqrt
 
 import numpy as np
@@ -22,8 +22,7 @@ class Controller():
         self.cohesion_weight=1.0
         #Create boids and paint them on the frame.
         for i in range(100):
-            self.boids.append(Boid(randint(0, self.frame_width), randint(0,
-                self.frame_height)))
+            self.boids.append(Boid(random()*self.frame_width, random()*self.frame_height))
             self.drawing_frame.draw_oval(self.boids[-1].position[0],
                     self.boids[-1].position[1], self.boid_diameter)
 
@@ -33,10 +32,10 @@ class Controller():
         while True:
             # Enumerate makes it possible to both get index and item of a list.
             for index, boid in enumerate(self.boids):
-                self.find_neighbors(index)
-                self.calculate_separation_force(index)
-                self.calculate_alignment_force(index)
-                self.calculate_cohesion_force(index)
+                #self.find_neighbors(index)
+                #self.calculate_separation_force(index)
+                #self.calculate_alignment_force(index)
+                #self.calculate_cohesion_force(index)
                 boid.update_boid()
 
                 # Boids move to other side of frame instead of outside.
