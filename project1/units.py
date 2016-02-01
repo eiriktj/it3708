@@ -25,11 +25,10 @@ class Boid():
     def update_boid(self):
         #seperation = self.separation_weight * calculate_separation_force()
         alignment = self.alignment_weight * self.alignment
-        #cohesion = self.cohesion_weight * calculate_cohesion_force()
-
+        cohesion = self.cohesion_weight * self.cohesion
         #self.velocity += self.separation + self.alignment + self.cohesion
 
-        self.velocity += self.alignment
+        self.velocity += self.alignment + self.cohesion
         # np.linalg.norm calculates the magnitude of the vector.
         velocity_magnitude = np.linalg.norm(self.velocity)
         self.direction = self.velocity/velocity_magnitude

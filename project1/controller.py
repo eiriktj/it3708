@@ -53,32 +53,34 @@ class Controller():
             # Updates frame.
             self.root.update()
             # Sleep 25ms.
-            self.root.after(25)
+            # self.root.after(25)
             # Delete all canvas figures.
             self.drawing_frame.canvas.delete('all')
 
     def find_neighbors(self, i):
         # Remove old neighbors.
         self.boids[i].neighbors = []
-        #x_distance = [self.boids[i].position[0]-self.neighbor_radius,
-        #                self.boids[i].position[0]+self.neighbor_radius]
-        #y_distance = [self.boids[i].position[1]-self.neighbor_radius,
-        #                self.boids[i].position[1]+self.neighbor_radius]
         # Enumerate makes it possible to both get index and item of a list.
         for index, boid in enumerate(self.boids):
             # np.linalg.norm(a-b) finds euclidean distance between two points.
             distance = np.linalg.norm(self.boids[i].position-boid.position)
             if (index != i) and (distance < 15*self.boid_diameter):
-            #x_distance = abs(self.boids[i].position[0]-boid.position[0])
-            #y_distance = abs(self.boids[i].position[1]-boid.position[1])
-            #if (index != i) and ((boid.position[0]>x_distance[0] and
-            #        boid.position[0]<x_distance[1]) and
-            #        (boid.position[1]>y_distance[0] and
-            #        boid.position[1]<y_distance[1])):
                 self.boids[i].neighbors.append(index)
 
     def calculate_alignment_force(self, i):
         self.boids[i].alignment = np.array([0.0, 0.0])
         for neighbor in self.boids[i].neighbors:
             self.boids[i].alignment += self.boids[neighbor].direction
+        magnitude = np.linalg.norm(self.boids[i].alignment) 
+        if magnitude > 0:
+            self.boids[i].alignment /= magnitude
+
+    def calculate_cohesion_force(self, i):
+        self.boids[i].cohesion = np.array([0.0, 0.0])
+        for neighbor in self.boids[i].neighbors:
+            self.boids[i].cohesion += self.boids[neighbor].position
+        self.boids[i].cohesion /= len(self.boids[i].neighbors)
+        magnitude = np.linalg.norm(self.boids[i].cohesion) 
+        if magnitude > 0:
+            self.boids[i].cohesion /= magnitude
 
