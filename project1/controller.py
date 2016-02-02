@@ -34,9 +34,9 @@ class Controller():
             # Calculate new forces for each boid
             for index in range(len(self.boids)):
                 self.find_neighbors(index)
-                #self.calculate_separation_force(index)
+                self.calculate_separation_force(index)
                 self.calculate_alignment_force(index)
-                #self.calculate_cohesion_force(index)
+                self.calculate_cohesion_force(index)
 
             # Update the position of each boid.
             for boid in self.boids:
@@ -67,6 +67,15 @@ class Controller():
             if (index != i) and (distance < 15*self.boid_diameter):
                 self.boids[i].neighbors.append(index)
 
+    def calculate_separation_force(self, i):
+        self.boids[i].separation = np.array([0.0, 0.0])
+        for neighbor in self.boids[i].neighbors:
+            self.boids[i].separation -= (self.boids[i].position - 
+                                         self.boids[neighbor].position)
+        magnitude = np.linalg.norm(self.boids[i].separation) 
+        if magnitude > 0:
+            self.boids[i].separation /= magnitude
+
     def calculate_alignment_force(self, i):
         self.boids[i].alignment = np.array([0.0, 0.0])
         for neighbor in self.boids[i].neighbors:
@@ -79,7 +88,8 @@ class Controller():
         self.boids[i].cohesion = np.array([0.0, 0.0])
         for neighbor in self.boids[i].neighbors:
             self.boids[i].cohesion += self.boids[neighbor].position
-        self.boids[i].cohesion /= len(self.boids[i].neighbors)
+        if len(self.boids[i].neighbors) > 1:
+            self.boids[i].cohesion /= len(self.boids[i].neighbors)
         magnitude = np.linalg.norm(self.boids[i].cohesion) 
         if magnitude > 0:
             self.boids[i].cohesion /= magnitude
