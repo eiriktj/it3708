@@ -17,9 +17,9 @@ class Boid():
         self.separation = np.array([0.0, 0.0])
         self.alignment = np.array([0.0, 0.0])
         self.cohesion = np.array([0.0, 0.0])
-        self.separation_weight = 0.0
+        self.separation_weight = 1.0
         self.alignment_weight = 0.0
-        self.cohesion_weight = 1.0
+        self.cohesion_weight = 0.0
         self.velocity_limit = 5.0
 
     def update_boid(self):
@@ -29,7 +29,7 @@ class Boid():
         self.velocity += self.separation + self.alignment + self.cohesion
         # np.linalg.norm calculates the magnitude of the vector.
         velocity_magnitude = np.linalg.norm(self.velocity)
-        if velocity_magnitude > 1:
+        if velocity_magnitude > 0:
             self.direction = self.velocity/velocity_magnitude
         if velocity_magnitude > self.velocity_limit:
             self.velocity = self.direction*self.velocity_limit

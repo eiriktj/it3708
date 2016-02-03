@@ -23,10 +23,8 @@ class Controller():
         #Create boids and paint them on the frame.
         for i in range(100):
             self.boids.append(Boid(random()*self.frame_width, random()*self.frame_height))
-            self.drawing_frame.draw_boid(self.boids[-1].position[0],
-                    self.boids[-1].position[1], self.boid_diameter,
-                    self.boid_radius, self.boids[-1].direction)
-
+            self.drawing_frame.draw_boid(self.boids[-1].position[0], self.boids[-1].position[1], self.boid_radius, 
+                                         self.boids[-1].direction)
         self.run()
 
     def run(self):
@@ -45,9 +43,7 @@ class Controller():
                 # Boids move to other side of frame instead of outside.
                 boid.position[0] %= self.frame_width
                 boid.position[1] %= self.frame_height
-                self.drawing_frame.draw_boid(boid.position[0],
-                        boid.position[1], self.boid_diameter, self.boid_radius,
-                        boid.direction)
+                self.drawing_frame.draw_boid(boid.position[0], boid.position[1], self.boid_radius, boid.direction)
                 #self.drawing_frame.move_figure(index, boid.velocity[0], boid.velocity[1])
 
             # Updates frame.
