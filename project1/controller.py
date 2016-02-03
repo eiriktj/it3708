@@ -53,40 +53,41 @@ class Controller():
             # Delete all canvas figures.
             self.drawing_frame.canvas.delete('all')
 
-    def find_neighbors(self, i):
+    def find_neighbors(self, index):
         # Remove old neighbors.
-        self.boids[i].neighbors = []
+        self.boids[index].neighbors = []
         # Enumerate makes it possible to both get index and item of a list.
-        for index, boid in enumerate(self.boids):
+        for boid_index, boid in enumerate(self.boids):
             # np.linalg.norm(a-b) finds euclidean distance between two points.
-            distance = np.linalg.norm(self.boids[i].position-boid.position)
-            if (index != i) and (distance < 15*self.boid_diameter):
-                self.boids[i].neighbors.append(index)
+            distance = np.linalg.norm(self.boids[index].position-boid.position)
+            if (boid_index != index) and (distance < 5*self.boid_diameter):
+                self.boids[index].neighbors.append(boid_index)
 
-    def calculate_separation_force(self, i):
-        self.boids[i].separation = np.array([0.0, 0.0])
-        for neighbor in self.boids[i].neighbors:
-            self.boids[i].separation -= (self.boids[i].position - 
-                                         self.boids[neighbor].position)
-        magnitude = np.linalg.norm(self.boids[i].separation) 
+    def calculate_separation_force(self, index):
+        self.boids[index].separation = np.array([0.0, 0.0])
+        for neighbor in self.boids[index].neighbors:
+            self.boids[index].separation -= (self.boids[neighbor].position - 
+                                         self.boids[index].position)
+        magnitude = np.linalg.norm(self.boids[index].separation) 
         if magnitude > 0:
-            self.boids[i].separation /= magnitude
+            self.boids[index].separation /= magnitude
 
-    def calculate_alignment_force(self, i):
-        self.boids[i].alignment = np.array([0.0, 0.0])
-        for neighbor in self.boids[i].neighbors:
-            self.boids[i].alignment += self.boids[neighbor].direction
-        magnitude = np.linalg.norm(self.boids[i].alignment) 
+    def calculate_alignment_force(self, index):
+        self.boids[index].alignment = np.array([0.0, 0.0])
+        for neighbor in self.boids[index].neighbors:
+            self.boids[index].alignment += self.boids[neighbor].direction
+        magnitude = np.linalg.norm(self.boids[index].alignment) 
         if magnitude > 0:
-            self.boids[i].alignment /= magnitude
+            self.boids[index].alignment /= magnitude
 
-    def calculate_cohesion_force(self, i):
-        self.boids[i].cohesion = np.array([0.0, 0.0])
-        for neighbor in self.boids[i].neighbors:
-            self.boids[i].cohesion += self.boids[neighbor].position
-        if len(self.boids[i].neighbors) > 1:
-            self.boids[i].cohesion /= len(self.boids[i].neighbors)
-        magnitude = np.linalg.norm(self.boids[i].cohesion) 
+    def calculate_cohesion_force(self, index):
+        self.boids[index].cohesion = np.array([0.0, 0.0])
+        for neighbor in self.boids[index].neighbors:
+            self.boids[index].cohesion += self.boids[neighbor].position
+        if len(self.boids[index].neighbors) > 0:
+            self.boids[index].cohesion /= len(self.boids[index].neighbors)
+            self.boids[index].cohesion -= self.boids[index].position
+        magnitude = np.linalg.norm(self.boids[index].cohesion) 
         if magnitude > 0:
-            self.boids[i].cohesion /= magnitude
+            self.boids[index].cohesion /= magnitude
 

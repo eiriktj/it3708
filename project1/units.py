@@ -17,9 +17,9 @@ class Boid():
         self.separation = np.array([0.0, 0.0])
         self.alignment = np.array([0.0, 0.0])
         self.cohesion = np.array([0.0, 0.0])
-        self.separation_weight = 1.0
-        self.alignment_weight = 0.0
-        self.cohesion_weight = 0.0
+        self.separation_weight = 1.3
+        self.alignment_weight = 1.0
+        self.cohesion_weight = 1.0
         self.velocity_limit = 5.0
 
     def update_boid(self):
