@@ -6,7 +6,7 @@ class Individual():
 
     def __init__(self):
         self.genotypes = bitarray()        
-        self.fitness = 0
+        self.fitness = 0.0
         # Creates random genotypes to individual.
         for i in range(20):
             self.genotypes.extend(str(randint(0,1)))
