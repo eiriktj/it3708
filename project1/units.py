@@ -11,21 +11,18 @@ class Boid():
     def __init__(self, random_width, random_height):
         random_direction = random()*2*pi
         self.direction = np.array([cos(random_direction), sin(random_direction)])
-        self.velocity = 2*self.direction
+        self.velocity = 20*self.direction
         self.position = np.array([random_width, random_height])
         self.neighbors = []
         self.separation = np.array([0.0, 0.0])
         self.alignment = np.array([0.0, 0.0])
         self.cohesion = np.array([0.0, 0.0])
-        self.separation_weight = 1.3
-        self.alignment_weight = 1.0
-        self.cohesion_weight = 1.0
-        self.velocity_limit = 5.0
+        self.velocity_limit = 30.0
 
-    def update_boid(self):
-        self.separation *= self.separation_weight
-        self.alignment *= self.alignment_weight
-        self.cohesion *= self.cohesion_weight
+    def update_boid(self, separation_weight, alignment_weight, cohesion_weight):
+        self.separation *= separation_weight
+        self.alignment *= alignment_weight
+        self.cohesion *= cohesion_weight
         self.velocity += self.separation + self.alignment + self.cohesion
         # np.linalg.norm calculates the magnitude of the vector.
         velocity_magnitude = np.linalg.norm(self.velocity)
