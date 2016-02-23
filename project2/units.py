@@ -1,5 +1,6 @@
-from bitarray import bitarray
 from random import randint
+
+from bitarray import bitarray
 
 
 class Individual():

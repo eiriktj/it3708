@@ -1,3 +1,7 @@
+from random import random
+from random import randint
+
+from bitarray import bitarray
 import numpy as np
 
 from units import Individual
@@ -19,6 +23,11 @@ class EvolutionaryAlgorithm():
         self.generation_number = 0
         # Number of survivors from previous generation.
         self.adult_survivors = 5
+        # How much recombination that is done between two individuals in a
+        # crossover.
+        self.crossover_rate = 0.5
+        #How much of the genes that are mutated
+        self.mutation_rate = 0.05
         # Solution to the problem.
         self.solution = []
         # Adult population.
@@ -75,15 +84,14 @@ class EvolutionaryAlgorithm():
     def generational_mixing(self):
         # List of individuals from the generation.
         previous_generation = self.population
-        # List of individuals in the next generation.
-        next_generation = []
-        while len(next_generation) < self.adult_survivors:
+        self.master_race = []
+        for i in range(self.adult_survivors):
             # Index of fittest individual in remaining individuals in previous
             # generation.
             fittest_index = np.argmax(previous_generation)
             # Adds currently fittest individual from the previous generation to
             # the next and removes it from the previous.
-            next_generation.append(previous_generation.pop(fittest_index))
+            self.master_race.append(previous_generation.pop(fittest_index))
 
     def mate_selection(self):
         if self.selection_mechanism == 1:
@@ -96,6 +104,26 @@ class EvolutionaryAlgorithm():
     #def tournament_selection(self):
 
     #def unknown_mechanism(self):
+
+    def mutation(self, genotypes):
+        if self.problem_number == 0:
+            #Creates genotypes for new individual.
+            new_genotypes = bitarray()
+            for genotype in genotypes:
+                if random() <= self.mutation_rate:
+                    new_genotypes.extend(str(randint(0,1)))
+                else:
+                    new_genotypes.extend(str(int(genotype)))
+        return new_genotypes
+
+    def crossover(self, genotypes1, genotypes2):
+        new_genotypes = bitarray()
+        for i in range(len(genotypes1)):
+            if random() <= self.crossover_rate:
+                new_genotypes.extend(str(int(genotypes1[i])))
+            else:
+                new_genotypes.extend(str(int(genotypes2[i])))
+        return new_genotypes
 
     #def evolutionary_loop(self):
 
