@@ -19,8 +19,14 @@ class EvolutionaryAlgorithm():
         # 0 fitness+proportionate, 1 sigma-scaling, 2 tournament selection, 3
         # unknown_mechanism
         self.selection_mechanism = 1
-        # Generation number.
+        # Statistics
         self.generation_number = 0
+        self.best_fitness = 0.0
+        self.average_fitness = 0.0
+        self.standard_deviation = 0.0
+        self.best_phenotype = []
+        # False when solution is found
+        self.no_solution = True
         # Number of survivors from previous generation.
         self.adult_survivors = 5
         # How much recombination that is done between two individuals in a
@@ -32,6 +38,8 @@ class EvolutionaryAlgorithm():
         self.solution = []
         # Adult population.
         self.population = []
+        # List of fitness of the population
+        self.population_fitness = []
         # Children of the new generation.
         self.children = []
         # Individuals from previous generation
@@ -46,6 +54,9 @@ class EvolutionaryAlgorithm():
         self.number_of_individuals = len(self.population)
 
     def evolutionary_loop(self):
+        while self.no_solution:
+            self.logging_routine()
+
 
     # Evaluates the fitness of the whole population.
     def fitness_evaluation(self):
@@ -57,16 +68,16 @@ class EvolutionaryAlgorithm():
         # Loops through every new individual.
         for individual in self.children:
                 # Phenotype of current individual.
-                phenotypes = individual.convert_geno_to_pheno()
-                # If the phenotypes is the same as the solution, we do not
+                phenotype = individual.convert_geno_to_pheno()
+                # If the phenotype is the same as the solution, we do not
                 # need to calculate the fitness. Same as the highest fitness
                 # value 1.
-                if phenotypes == self.solution:
+                if phenotype == self.solution:
                     individual.fitness = 1.0
                 else:
                     # Calculates error E_j.
-                    for phenotype in phenotypes:
-                        if phenotype == 0:
+                    for pheno in phenotype:
+                        if pheno == 0:
                             individual.fitness += 1.0
                     # Calculates fitness F_j.
                     individual.fitness = 1.0/(1.0+individual.fitness)
@@ -123,25 +134,41 @@ class EvolutionaryAlgorithm():
 
     def mutation(self, genotypes):
         if self.problem_number == 0:
-            #Creates genotypes for new individual.
-            new_genotypes = bitarray()
-            for genotype in genotypes:
+            #Creates genotype for new individual.
+            new_genotype = bitarray()
+            for geno in genotype:
                 if random() <= self.mutation_rate:
-                    new_genotypes.extend(str(randint(0,1)))
+                    new_genotype.extend(str(randint(0,1)))
                 else:
-                    new_genotypes.extend(str(int(genotype)))
-        return new_genotypes
+                    new_genotype.extend(str(int(geno)))
+        return new_genotype
 
-    def crossover(self, genotypes1, genotypes2):
-        new_genotypes = bitarray()
-        for i in range(len(genotypes1)):
+    def crossover(self, genotype1, genotype2):
+        new_genotype = bitarray()
+        for i in range(len(genotype1)):
             if random() <= self.crossover_rate:
-                new_genotypes.extend(str(int(genotypes1[i])))
+                new_genotype.extend(str(int(genotype1[i])))
             else:
-                new_genotypes.extend(str(int(genotypes2[i])))
-        return new_genotypes
+                new_genotype.extend(str(int(genotype2[i])))
+        return new_genotype
 
-    #def logging_routine(self):
+    def logging_routine(self):
+        self.population_fitness = []
+        for individual in self.population:
+            self.population_fitness.append(individual.fitness)
+        self.generation_number += 1
+        self.average_fitness = np.mean(self.population_fitness)
+        self.standard_deviation = np.std(self.population_fitness)
+        # Index of individual with best fitness.
+        best_index = np.argmax(self.population_fitness)
+        self.best_fitness = self.population_fitness[best_index]
+        self.best_phenotype =
+        self.population[best_index].convert_geno_to_pheno()
+        print('Generation Number: ' + str(self.generation_number))
+        print('Average Fitness: ' + str(self.average_fitness))
+        print('Standard Deviation: ' + str(self.standard_deviation))
+        print('Best Fitness: ' + str(self.best_fitness))
+        print('Best Phenotype: ' + str(self.best_phenotype))
 
     #def plotting routine(self):
 
