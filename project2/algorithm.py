@@ -52,11 +52,24 @@ class EvolutionaryAlgorithm():
             self.population.append(Individual())
         # Number of individuals in the new generation.
         self.number_of_individuals = len(self.population)
+        # Starting loop
+        self.evolutionary_loop()
 
     def evolutionary_loop(self):
+        self.children = self.population
+        self.fitness_evaluation()
+        self.logging_routine()
         while self.no_solution:
-            self.logging_routine()
+            print('Loop')
+            self.mate_selection()
+            self.adult_selection()
 
+            self.no_solution = False
+
+        print('Population genotypes: ')
+        for individual in self.population:
+            print(individual.genotype)
+        print(' Population fitness: ' + str(self.population_fitness))
 
     # Evaluates the fitness of the whole population.
     def fitness_evaluation(self):
@@ -66,21 +79,22 @@ class EvolutionaryAlgorithm():
 
     def one_max(self):
         # Loops through every new individual.
-        for individual in self.children:
+        for index, individual in enumerate(self.children):
                 # Phenotype of current individual.
                 phenotype = individual.convert_geno_to_pheno()
                 # If the phenotype is the same as the solution, we do not
                 # need to calculate the fitness. Same as the highest fitness
                 # value 1.
                 if phenotype == self.solution:
-                    individual.fitness = 1.0
+                    self.children[index].fitness = 1.0
+                    self.no_solution = False
                 else:
                     # Calculates error E_j.
                     for pheno in phenotype:
                         if pheno == 0:
                             individual.fitness += 1.0
                     # Calculates fitness F_j.
-                    individual.fitness = 1.0/(1.0+individual.fitness)
+                    self.children[index].fitness = 1.0/(1.0+individual.fitness)
 
     #def lolz_prefix(self):
 
@@ -108,7 +122,7 @@ class EvolutionaryAlgorithm():
 
     def mate_selection(self):
         if self.selection_mechanism == 1:
-        return self.sigma_scaling()
+            return self.sigma_scaling()
 
 
     #def fitness_proportionate(self):
@@ -152,6 +166,7 @@ class EvolutionaryAlgorithm():
                 new_genotype.extend(str(int(genotype2[i])))
         return new_genotype
 
+    # Calculates and logs statistics.
     def logging_routine(self):
         self.population_fitness = []
         for individual in self.population:
@@ -162,8 +177,7 @@ class EvolutionaryAlgorithm():
         # Index of individual with best fitness.
         best_index = np.argmax(self.population_fitness)
         self.best_fitness = self.population_fitness[best_index]
-        self.best_phenotype =
-        self.population[best_index].convert_geno_to_pheno()
+        self.best_phenotype = self.population[best_index].convert_geno_to_pheno()
         print('Generation Number: ' + str(self.generation_number))
         print('Average Fitness: ' + str(self.average_fitness))
         print('Standard Deviation: ' + str(self.standard_deviation))
