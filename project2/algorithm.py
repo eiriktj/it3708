@@ -21,7 +21,12 @@ class EvolutionaryAlgorithm():
         self.adult_survivors = 5
         # Solution to the problem.
         self.solution = []
+        # Adult population.
         self.population = []
+        # Children of the new generation.
+        self.children = []
+        # Individuals from previous generation
+        self.master_race = []
         # Creates solution for 20-bit OneMax problem.
         for i in range(20):
             self.solution.append(1)
@@ -38,12 +43,8 @@ class EvolutionaryAlgorithm():
             self.one_max()
 
     def one_max(self):
-        # Loops through every individual in the population
-        for individual in self.population:
-            # Do not calculate the individuals fitness if it has been
-            # calculated earlier. Individual may exist for multiple
-            # generations.
-            if individual.fitness == 0:
+        # Loops through every new individual.
+        for individual in self.children:
                 # Phenotype of current individual.
                 phenotypes = individual.convert_geno_to_pheno()
                 # If the phenotypes is the same as the solution, we do not
