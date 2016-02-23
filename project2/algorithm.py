@@ -45,6 +45,8 @@ class EvolutionaryAlgorithm():
         # Number of individuals in the new generation.
         self.number_of_individuals = len(self.population)
 
+    def evolutionary_loop(self):
+
     # Evaluates the fitness of the whole population.
     def fitness_evaluation(self):
         # Evalutes according to the problems number.
@@ -95,11 +97,25 @@ class EvolutionaryAlgorithm():
 
     def mate_selection(self):
         if self.selection_mechanism == 1:
-            self.sigma_scaling
+        return self.sigma_scaling()
+
 
     #def fitness_proportionate(self):
 
-    #def sigma_scaling(self):
+    def sigma_scaling(self):
+        # List of the fitness values of the population.
+        population_fitness = []
+        for individual in self.population:
+            population_fitness.append(individual.fitness)
+        # 2 times the standard deviation of the fitness.
+        standard_deviation_2 = 2*np.std(population_fitness)
+        # The mean of the populations fitness.
+        mean = np.mean(population_fitness)
+        # Sigma scaled fitness of the population.
+        sigma_fitness = []
+        for fitness in population_fitness:
+            sigma_fitness.append(1+((fitness-mean)/standard_deviation_2))
+        return sigma_fitness
 
     #def tournament_selection(self):
 
@@ -124,8 +140,6 @@ class EvolutionaryAlgorithm():
             else:
                 new_genotypes.extend(str(int(genotypes2[i])))
         return new_genotypes
-
-    #def evolutionary_loop(self):
 
     #def logging_routine(self):
 
