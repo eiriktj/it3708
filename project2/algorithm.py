@@ -4,6 +4,7 @@ from copy import deepcopy
 
 from bitarray import bitarray
 import numpy as np
+import matplotlib.pyplot as plt
 
 from units import Individual
 
@@ -20,12 +21,17 @@ class EvolutionaryAlgorithm():
         # 0 fitness+proportionate, 1 sigma-scaling, 2 tournament selection, 3
         # unknown_mechanism
         self.selection_mechanism = 1
-        # Statistics
+        # Logging Statistics
         self.generation_number = 0
         self.best_fitness = 0.0
         self.average_fitness = 0.0
-        self.standard_deviation = 0.0
+        self.standard_deviation_fitness = 0.0
         self.best_phenotype = []
+        # Plotting Statistics
+        self.best_fitness_list = []
+        self.average_fitness_list = []
+        self.standard_deviation_fitness_list = []
+        self.generation_number_list = []
         # False when solution is found
         self.no_solution = True
         # Number of survivors from previous generation.
@@ -75,6 +81,7 @@ class EvolutionaryAlgorithm():
         for individual in self.population:
             print(individual.genotype)
         print(' Population fitness: ' + str(self.population_fitness))
+        self.plotting_routine()
 
     # Evaluates the fitness of the whole population.
     def fitness_evaluation(self):
@@ -163,7 +170,7 @@ class EvolutionaryAlgorithm():
 
     def sigma_scaling(self):
         # 2 times the standard deviation of the fitness.
-        standard_deviation_2 = 2*self.standard_deviation
+        standard_deviation_2 = 2*self.standard_deviation_fitness
         # The mean of the populations fitness.
         mean = self.average_fitness
         # Sigma scaled fitness of the population.
@@ -218,16 +225,29 @@ class EvolutionaryAlgorithm():
             self.population_fitness.append(individual.fitness)
         self.generation_number += 1
         self.average_fitness = np.mean(self.population_fitness)
-        self.standard_deviation = np.std(self.population_fitness)
+        self.standard_deviation_fitness = np.std(self.population_fitness)
         # Index of individual with best fitness.
         best_index = np.argmax(self.population_fitness)
         self.best_fitness = self.population_fitness[best_index]
         self.best_phenotype = self.population[best_index].convert_geno_to_pheno()
         print('Generation Number: ' + str(self.generation_number))
         print('Average Fitness: ' + str(self.average_fitness))
-        print('Standard Deviation: ' + str(self.standard_deviation))
+        print('Standard Deviation: ' + str(self.standard_deviation_fitness))
         print('Best Fitness: ' + str(self.best_fitness))
         print('Best Phenotype: ' + str(self.best_phenotype))
+        # Used for plotting routine.
+        self.best_fitness_list.append(self.best_fitness)
+        self.average_fitness_list.append(self.average_fitness)
+        self.standard_deviation_fitness_list.append(self.standard_deviation_fitness)
+        self.generation_number_list.append(self.generation_number)
 
-    #def plotting routine(self):
+    def plotting_routine(self):
+        plt.plot(self.generation_number_list, self.best_fitness_list, label='Best Fitness')
+        plt.plot(self.generation_number_list, self.average_fitness_list, label='Average Fitness')
+        plt.plot(self.generation_number_list, self.standard_deviation_fitness_list, label='Standard Deviation Fitness')
+        plt.xlabel('Generations')
+        plt.ylabel('Fitness')
+        plt.title('Evolutionary Algorithm')
+        plt.legend()
+        plt.show()
 
