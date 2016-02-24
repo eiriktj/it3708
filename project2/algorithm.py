@@ -1,5 +1,6 @@
 from random import random
 from random import randint
+from copy import deepcopy
 
 from bitarray import bitarray
 import numpy as np
@@ -45,26 +46,30 @@ class EvolutionaryAlgorithm():
         # Individuals from previous generation
         self.master_race = []
         # Creates solution for 20-bit OneMax problem.
-        for i in range(20):
+        for i in range(40):
             self.solution.append(1)
         # Creates first generation of the population.
         for i in range(50):
-            self.population.append(Individual())
-        # Number of individuals in the new generation.
+            self.population.append(Individual(self.random_genotype()))
+        # Number of individuals in each generation.
         self.number_of_individuals = len(self.population)
+        # Number of new individuals in each generation.
+        self.number_of_children = self.number_of_individuals - self.adult_survivors
         # Starting loop
         self.evolutionary_loop()
 
     def evolutionary_loop(self):
         self.children = self.population
         self.fitness_evaluation()
+        self.population = self.children
         self.logging_routine()
         while self.no_solution:
-            print('Loop')
-            self.mate_selection()
-            self.adult_selection()
-
-            self.no_solution = False
+            if self.selection_protocol == 2:
+                self.elitism()
+            self.mating()
+            self.fitness_evaluation()
+            self.population = self.children+self.master_race
+            self.logging_routine()
 
         print('Population genotypes: ')
         for individual in self.population:
@@ -102,60 +107,100 @@ class EvolutionaryAlgorithm():
 
     def adult_selection(self):
         if self.selection_protocol == 2:
-            self.generational_mixing()
+            self.elitism()
 
     #def full_replacement(self):
 
     #def over_production(self):
-
-    def generational_mixing(self):
+    
+    # Generational Mixing.
+    def elitism(self):
         # List of individuals from the generation.
-        previous_generation = self.population
+        previous_generation_fitness = deepcopy(self.population_fitness)
         self.master_race = []
         for i in range(self.adult_survivors):
             # Index of fittest individual in remaining individuals in previous
             # generation.
-            fittest_index = np.argmax(previous_generation)
+            fittest_index = np.argmax(previous_generation_fitness)
             # Adds currently fittest individual from the previous generation to
             # the next and removes it from the previous.
-            self.master_race.append(previous_generation.pop(fittest_index))
+            self.master_race.append(self.population[fittest_index])
 
-    def mate_selection(self):
+    # Mate selection.
+    def mating(self):
+        self.children = []
         if self.selection_mechanism == 1:
-            return self.sigma_scaling()
+            scaled_fitness = self.sigma_scaling()
+            for i in range(self.number_of_children):
+                # Each roulette value
+                roulette_value1 = random()
+                roulette_value2 = random()
+                # Index of individuals who mates.
+                index1 = 0
+                index2 = 0
+                # Position of needle of roulette. Hit when the random value is
+                # equal or lower.
+                needle_value = 0.0
+                for index, fitness in enumerate(scaled_fitness):
+                    needle_value += fitness
+                    if roulette_value1 <= needle_value:
+                        index1 = index
+                        break
+                for index, fitness in enumerate(scaled_fitness):
+                    needle_value += fitness
+                    if roulette_value2 <= needle_value:
+                        index2 = index
+                        break
+                new_genotype = self.crossover(self.population[index1].genotype,
+                        self.population[index2].genotype)
+                new_genotype = self.mutation(new_genotype)
+                self.children.append(Individual(new_genotype))
+
+    #def mate_selection(self):
 
 
     #def fitness_proportionate(self):
 
     def sigma_scaling(self):
-        # List of the fitness values of the population.
-        population_fitness = []
-        for individual in self.population:
-            population_fitness.append(individual.fitness)
         # 2 times the standard deviation of the fitness.
-        standard_deviation_2 = 2*np.std(population_fitness)
+        standard_deviation_2 = 2*self.standard_deviation
         # The mean of the populations fitness.
-        mean = np.mean(population_fitness)
+        mean = self.average_fitness
         # Sigma scaled fitness of the population.
         sigma_fitness = []
-        for fitness in population_fitness:
+        for fitness in self.population_fitness:
             sigma_fitness.append(1+((fitness-mean)/standard_deviation_2))
+            sigma_fitness_sum = sum(sigma_fitness)
+        for index, fitness in enumerate(sigma_fitness):
+            sigma_fitness[index] = fitness/sigma_fitness_sum
         return sigma_fitness
 
     #def tournament_selection(self):
 
     #def unknown_mechanism(self):
 
-    def mutation(self, genotypes):
+    def mutation(self, genotype):
         if self.problem_number == 0:
             #Creates genotype for new individual.
             new_genotype = bitarray()
             for geno in genotype:
                 if random() <= self.mutation_rate:
-                    new_genotype.extend(str(randint(0,1)))
+                    new_genotype.extend(self.new_geno())
                 else:
                     new_genotype.extend(str(int(geno)))
         return new_genotype
+
+    def new_geno(self):
+        if self.problem_number == 0:
+            return str(randint(0,1))
+
+    # Creates random genotype.
+    def random_genotype(self):
+        new_random_genotype = bitarray()
+        if self.problem_number == 0:
+            for i in range(40):
+                new_random_genotype.extend(str(randint(0,1)))
+        return new_random_genotype
 
     def crossover(self, genotype1, genotype2):
         new_genotype = bitarray()
