@@ -10,17 +10,11 @@ from units import Individual
 
 class EvolutionaryAlgorithm():
 
-    def __init__(self):
-        # Problem number of problem that is to be solved.
-        # 0 OneMax, 1 LOLZ Prefix, 2 Suprising Sequences.
-        self.problem_number = 0
-        # Type of adult selection protocol.
-        # 0 full, 1 over-production, 2 mixing.
-        self.selection_protocol = 2
-        # Type of mechanism for mate selection.
-        # 0 fitness+proportionate, 1 sigma-scaling, 2 tournament selection, 3
-        # unknown_mechanism
-        self.selection_mechanism = 1
+    def __init__(self, problem_number, selection_protocol,
+        selection_mechanism, solution, solution_length):
+        self.problem_number = problem_number
+        self.selection_protocol = selection_protocol
+        self.selection_mechanism = selection_mechanism
         # Logging Statistics
         self.generation_number = 0
         self.best_fitness = 0.0
@@ -35,14 +29,14 @@ class EvolutionaryAlgorithm():
         # False when solution is found
         self.no_solution = True
         # Number of survivors from previous generation.
-        self.adult_survivors = 5
+        self.number_of_elites = 5
         # How much recombination that is done between two individuals in a
         # crossover.
         self.crossover_rate = 0.5
         #How much of the genes that are mutated
         self.mutation_rate = 0.05
-        # Solution to the problem.
-        self.solution = []
+        self.solution = solution
+        self.solution_length = solution_length
         # Adult population.
         self.population = []
         # List of fitness of the population
@@ -51,16 +45,13 @@ class EvolutionaryAlgorithm():
         self.children = []
         # Individuals from previous generation
         self.master_race = []
-        # Creates solution for 20-bit OneMax problem.
-        for i in range(40):
-            self.solution.append(1)
         # Creates first generation of the population.
         for i in range(50):
             self.population.append(Individual(self.random_genotype()))
         # Number of individuals in each generation.
         self.number_of_individuals = len(self.population)
         # Number of new individuals in each generation.
-        self.number_of_children = self.number_of_individuals - self.adult_survivors
+        self.number_of_children = self.number_of_individuals - self.number_of_elites
         # Starting loop
         self.evolutionary_loop()
 
@@ -125,7 +116,7 @@ class EvolutionaryAlgorithm():
         # List of individuals from the generation.
         previous_generation_fitness = deepcopy(self.population_fitness)
         self.master_race = []
-        for i in range(self.adult_survivors):
+        for i in range(self.number_of_elites):
             # Index of fittest individual in remaining individuals in previous
             # generation.
             fittest_index = np.argmax(previous_generation_fitness)
@@ -205,7 +196,7 @@ class EvolutionaryAlgorithm():
     def random_genotype(self):
         new_random_genotype = bitarray()
         if self.problem_number == 0:
-            for i in range(40):
+            for i in range(self.solution_length):
                 new_random_genotype.extend(str(randint(0,1)))
         return new_random_genotype
 

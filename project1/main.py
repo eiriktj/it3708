@@ -9,8 +9,8 @@ def main():
     # Create GUI Frame
     root = Tk()
     drawing_frame = DrawingFrame(root)
-    frame_width = 1920
-    frame_height = 1200
+    frame_width = 1280
+    frame_height = 800
     root.geometry(str(frame_width)+'x'+str(frame_height)+'+0+0')
 
     # Initializes Controller class.
