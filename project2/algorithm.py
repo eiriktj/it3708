@@ -39,6 +39,7 @@ class EvolutionaryAlgorithm():
         self.solution_length = solution_length
         # Adult population.
         self.population = []
+        self.population_size = 50
         # List of fitness of the population
         self.population_fitness = []
         # Children of the new generation.
@@ -46,7 +47,7 @@ class EvolutionaryAlgorithm():
         # Individuals from previous generation
         self.master_race = []
         # Creates first generation of the population.
-        for i in range(50):
+        for i in range(self.population_size):
             self.population.append(Individual(self.random_genotype()))
         # Number of individuals in each generation.
         self.number_of_individuals = len(self.population)
@@ -79,6 +80,8 @@ class EvolutionaryAlgorithm():
         # Evalutes according to the problems number.
         if self.problem_number == 0:
             self.one_max()
+        elif self.problem_number == 1:
+            self.lolz_prefix()
 
     def one_max(self):
         # Loops through every new individual.
@@ -99,7 +102,15 @@ class EvolutionaryAlgorithm():
                     # Calculates fitness F_j.
                     self.children[index].fitness = 1.0/(1.0+individual.fitness)
 
-    #def lolz_prefix(self):
+    def lolz_prefix(self):
+        z = 21
+        for index, individual in enumerate(self.children):
+            phenotype = individual.convert_geno_to_pheno()
+            if phenotype == self.solution:
+                self.children[index].fitness = 1.0
+                self.no_solution = False
+            else:
+                 
 
     #def suprising_sequences(self):
 

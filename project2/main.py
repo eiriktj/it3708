@@ -9,7 +9,7 @@ def main():
     solution = []
     # Length of solution.
     solution_length = 0
-    if problem_number == 0:
+    if problem_number == 0 or problem_number == 1:
         solution_length = 40
         # Creates solution for 20-bit OneMax problem.
         for i in range(solution_length):
