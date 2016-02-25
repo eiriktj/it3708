@@ -4,7 +4,7 @@ from algorithm import EvolutionaryAlgorithm
 def main():
     # Problem number of problem that is to be solved.
     # 0 OneMax, 1 LOLZ Prefix, 2 Suprising Sequences.
-    problem_number = 0
+    problem_number = 1
     # Solution of the problem.
     solution = []
     # Length of solution.
@@ -16,11 +16,11 @@ def main():
             solution.append(1)
     # Type of adult selection protocol.
     # 0 full, 1 over-production, 2 mixing.
-    selection_protocol = 0 #2
+    selection_protocol = 2 #2
     # Type of mechanism for mate selection.
     # 0 fitness+proportionate, 1 sigma-scaling, 2 tournament selection, 
     # 3 unknown_mechanism
-    selection_mechanism = 0 #1
+    selection_mechanism = 1 #1
     EvolutionaryAlgorithm(problem_number, selection_protocol,
             selection_mechanism, solution, solution_length)
 

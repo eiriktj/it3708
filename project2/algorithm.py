@@ -29,7 +29,7 @@ class EvolutionaryAlgorithm():
         # False when solution is found
         self.no_solution = True
         # Number of survivors from previous generation.
-        self.number_of_elites = 0 #5
+        self.number_of_elites = 5 #5
         # How much recombination that is done between two individuals in a
         # crossover.
         self.crossover_rate = 0.5 #0.5
@@ -51,6 +51,10 @@ class EvolutionaryAlgorithm():
             self.population.append(Individual(self.random_genotype()))
         # Number of new individuals in each generation.
         self.number_of_children = self.population_size - self.number_of_elites
+        if self.problem_number == 1:
+            self.all_zeroes = []
+            for i in range(self.solution_length):
+                self.all_zeroes.append(0)
         # Starting loop
         self.evolutionary_loop()
 
@@ -102,14 +106,42 @@ class EvolutionaryAlgorithm():
                     self.children[index].fitness = count/self.solution_length
 
     def lolz_prefix(self):
-        z = 21
+        z = 21.0
         for index, individual in enumerate(self.children):
             phenotype = individual.convert_geno_to_pheno()
             if phenotype == self.solution:
                 self.children[index].fitness = 1.0
                 self.no_solution = False
-            #else:
-                 
+            elif phenotype == self.all_zeroes:
+                self.children[index].fitness = z/self.solution_length
+            else:
+                best_0 = 1
+                best_1 = 1
+                temp_num = phenotype[0]
+                temp_best = 1
+                for i in range(1, self.solution_length):
+                    if phenotype[i] == 0:
+                        if temp_num ==0:
+                            temp_best += 1
+                            if temp_best > best_0:
+                                best_0 = temp_best
+                        else:
+                            temp_num = 0
+                            temp_best = 1
+                    if phenotype[i] == 1:
+                        if temp_num ==1:
+                            temp_best += 1
+                            if temp_best > best_1:
+                                best_1 = temp_best
+                        else:
+                            temp_num = 1
+                            temp_best = 1
+                if best_0 > z:
+                    best_0 = z
+                if best_1 >= best_0:
+                    self.children[index].fitness = best_1/self.solution_length
+                else:
+                    self.children[index].fitness = best_0/self.solution_length
 
     #def suprising_sequences(self):
 
@@ -197,7 +229,7 @@ class EvolutionaryAlgorithm():
     #def unknown_mechanism(self):
 
     def mutation(self, genotype):
-        if self.problem_number == 0:
+        if self.problem_number == 0 or self.problem_number == 1:
             #Creates genotype for new individual.
             new_genotype = bitarray()
             for geno in genotype:
@@ -205,16 +237,16 @@ class EvolutionaryAlgorithm():
                     new_genotype.extend(self.new_geno())
                 else:
                     new_genotype.extend(str(int(geno)))
-        return new_genotype
+            return new_genotype
 
     def new_geno(self):
-        if self.problem_number == 0:
+        if self.problem_number == 0 or self.problem_number == 1:
             return str(randint(0,1))
 
     # Creates random genotype.
     def random_genotype(self):
         new_random_genotype = bitarray()
-        if self.problem_number == 0:
+        if self.problem_number == 0 or self.problem_number == 1:
             for i in range(self.solution_length):
                 new_random_genotype.extend(str(randint(0,1)))
         return new_random_genotype
