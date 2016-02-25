@@ -16,11 +16,11 @@ def main():
             solution.append(1)
     # Type of adult selection protocol.
     # 0 full, 1 over-production, 2 mixing.
-    selection_protocol = 2 #0
+    selection_protocol = 0 #2
     # Type of mechanism for mate selection.
     # 0 fitness+proportionate, 1 sigma-scaling, 2 tournament selection, 
     # 3 unknown_mechanism
-    selection_mechanism = 1 #0
+    selection_mechanism = 0 #1
     EvolutionaryAlgorithm(problem_number, selection_protocol,
             selection_mechanism, solution, solution_length)
 

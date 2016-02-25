@@ -29,17 +29,17 @@ class EvolutionaryAlgorithm():
         # False when solution is found
         self.no_solution = True
         # Number of survivors from previous generation.
-        self.number_of_elites = 5 #0
+        self.number_of_elites = 0 #5
         # How much recombination that is done between two individuals in a
         # crossover.
-        self.crossover_rate = 0.5 #0.9
+        self.crossover_rate = 0.5 #0.5
         #How much of the genes that are mutated
-        self.mutation_rate = 0.05 #0.1
+        self.mutation_rate = 0.01 #0.05
         self.solution = solution
         self.solution_length = solution_length
         # Adult population.
         self.population = []
-        self.population_size = 50 #370
+        self.population_size = 200 #50
         # List of fitness of the population
         self.population_fitness = []
         # Children of the new generation.
@@ -67,10 +67,10 @@ class EvolutionaryAlgorithm():
             self.population = self.children+self.master_race
             self.logging_routine()
 
-        print('Population genotypes: ')
-        for individual in self.population:
-            print(individual.genotype)
-        print(' Population fitness: ' + str(self.population_fitness))
+        #print('Population genotypes: ')
+        #for individual in self.population:
+        #    print(individual.genotype)
+        #print(' Population fitness: ' + str(self.population_fitness))
         self.plotting_routine()
 
     # Evaluates the fitness of the whole population.
@@ -157,6 +157,7 @@ class EvolutionaryAlgorithm():
                 if roulette_value1 <= needle_value:
                     index1 = index
                     break
+            needle_value = 0.0
             for index, fitness in enumerate(scaled_fitness):
                 needle_value += fitness
                 if roulette_value2 <= needle_value:
