@@ -13,14 +13,14 @@ def main():
         solution_length = 40
         # Creates solution for 20-bit OneMax problem.
         for i in range(solution_length):
-            self.solution.append(1)
+            solution.append(1)
     # Type of adult selection protocol.
     # 0 full, 1 over-production, 2 mixing.
-    selection_protocol = 2
+    selection_protocol = 2 #0
     # Type of mechanism for mate selection.
     # 0 fitness+proportionate, 1 sigma-scaling, 2 tournament selection, 
     # 3 unknown_mechanism
-    selection_mechanism = 1
+    selection_mechanism = 1 #0
     EvolutionaryAlgorithm(problem_number, selection_protocol,
             selection_mechanism, solution, solution_length)
 

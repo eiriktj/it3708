@@ -29,17 +29,17 @@ class EvolutionaryAlgorithm():
         # False when solution is found
         self.no_solution = True
         # Number of survivors from previous generation.
-        self.number_of_elites = 5
+        self.number_of_elites = 5 #0
         # How much recombination that is done between two individuals in a
         # crossover.
-        self.crossover_rate = 0.5
+        self.crossover_rate = 0.5 #0.9
         #How much of the genes that are mutated
-        self.mutation_rate = 0.05
+        self.mutation_rate = 0.05 #0.1
         self.solution = solution
         self.solution_length = solution_length
         # Adult population.
         self.population = []
-        self.population_size = 50
+        self.population_size = 50 #370
         # List of fitness of the population
         self.population_fitness = []
         # Children of the new generation.
@@ -49,10 +49,8 @@ class EvolutionaryAlgorithm():
         # Creates first generation of the population.
         for i in range(self.population_size):
             self.population.append(Individual(self.random_genotype()))
-        # Number of individuals in each generation.
-        self.number_of_individuals = len(self.population)
         # Number of new individuals in each generation.
-        self.number_of_children = self.number_of_individuals - self.number_of_elites
+        self.number_of_children = self.population_size - self.number_of_elites
         # Starting loop
         self.evolutionary_loop()
 
@@ -95,12 +93,13 @@ class EvolutionaryAlgorithm():
                     self.children[index].fitness = 1.0
                     self.no_solution = False
                 else:
-                    # Calculates error E_j.
-                    for pheno in phenotype:
-                        if pheno == 0:
-                            individual.fitness += 1.0
-                    # Calculates fitness F_j.
-                    self.children[index].fitness = 1.0/(1.0+individual.fitness)
+                    # Count 1s in phenotype.
+                    count = 0.0
+                    for i in range(self.solution_length):
+                        if phenotype[i] == self.solution[i]:
+                            count += 1.0
+                    # Calculates fitness.
+                    self.children[index].fitness = count/self.solution_length
 
     def lolz_prefix(self):
         z = 21
@@ -109,7 +108,7 @@ class EvolutionaryAlgorithm():
             if phenotype == self.solution:
                 self.children[index].fitness = 1.0
                 self.no_solution = False
-            else:
+            #else:
                  
 
     #def suprising_sequences(self):
@@ -138,37 +137,45 @@ class EvolutionaryAlgorithm():
     # Mate selection.
     def mating(self):
         self.children = []
-        if self.selection_mechanism == 1:
+        scaled_fitness = []
+        if self.selection_mechanism == 0:
+            scaled_fitness = self.fitness_proportionate()
+        elif self.selection_mechanism == 1:
             scaled_fitness = self.sigma_scaling()
-            for i in range(self.number_of_children):
-                # Each roulette value
-                roulette_value1 = random()
-                roulette_value2 = random()
-                # Index of individuals who mates.
-                index1 = 0
-                index2 = 0
-                # Position of needle of roulette. Hit when the random value is
-                # equal or lower.
-                needle_value = 0.0
-                for index, fitness in enumerate(scaled_fitness):
-                    needle_value += fitness
-                    if roulette_value1 <= needle_value:
-                        index1 = index
-                        break
-                for index, fitness in enumerate(scaled_fitness):
-                    needle_value += fitness
-                    if roulette_value2 <= needle_value:
-                        index2 = index
-                        break
-                new_genotype = self.crossover(self.population[index1].genotype,
-                        self.population[index2].genotype)
-                new_genotype = self.mutation(new_genotype)
-                self.children.append(Individual(new_genotype))
+        for i in range(self.number_of_children):
+            # Each roulette value
+            roulette_value1 = random()
+            roulette_value2 = random()
+            # Index of individuals who mates.
+            index1 = 0
+            index2 = 0
+            # Position of needle of roulette. Hit when the random value is
+            # equal or lower.
+            needle_value = 0.0
+            for index, fitness in enumerate(scaled_fitness):
+                needle_value += fitness
+                if roulette_value1 <= needle_value:
+                    index1 = index
+                    break
+            for index, fitness in enumerate(scaled_fitness):
+                needle_value += fitness
+                if roulette_value2 <= needle_value:
+                    index2 = index
+                    break
+            new_genotype = self.crossover(self.population[index1].genotype,
+                    self.population[index2].genotype)
+            new_genotype = self.mutation(new_genotype)
+            self.children.append(Individual(new_genotype))
 
     #def mate_selection(self):
 
 
-    #def fitness_proportionate(self):
+    def fitness_proportionate(self):
+        proportionate_fitness = []
+        fitness_sum = sum(self.population_fitness)
+        for fitness in self.population_fitness:
+            proportionate_fitness.append(fitness/fitness_sum)
+        return proportionate_fitness
 
     def sigma_scaling(self):
         # 2 times the standard deviation of the fitness.
@@ -179,7 +186,7 @@ class EvolutionaryAlgorithm():
         sigma_fitness = []
         for fitness in self.population_fitness:
             sigma_fitness.append(1+((fitness-mean)/standard_deviation_2))
-            sigma_fitness_sum = sum(sigma_fitness)
+        sigma_fitness_sum = sum(sigma_fitness)
         for index, fitness in enumerate(sigma_fitness):
             sigma_fitness[index] = fitness/sigma_fitness_sum
         return sigma_fitness
